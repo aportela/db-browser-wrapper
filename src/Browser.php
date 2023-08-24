@@ -87,6 +87,7 @@ final class Browser
                 if ($this->pager->totalResults == 0) {
                     $this->pager->totalPages = 0;
                 } else {
+                    $this->pager->totalResults += $this->pager->resultsPage * ($this->pager->currentPageIndex - 1);
                     $this->pager->totalPages = $this->pager->currentPageIndex;
                 }
             }
