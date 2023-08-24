@@ -2,7 +2,7 @@
     "name": "aportela/db-browser-wrapper",
     "description": "Custom php (pdo) database element browsing wrapper ",
     "type": "library",
-    "license": "AFFERO GENERAL PUBLIC LICENSE",
+    "license": "AGPL-3.0-only",
     "authors": [
         {
             "name": "alex",
