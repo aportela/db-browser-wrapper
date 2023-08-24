@@ -11,7 +11,7 @@ final class Browser
     private \aportela\DatabaseBrowserWrapper\Sort $sort;
     private \aportela\DatabaseBrowserWrapper\Filter $filter;
 
-    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions = [], array $fieldCountDefition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter)
+    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter)
     {
         $this->dbh = $dbh;
         if (count($fieldDefinitions) > 0) {
@@ -57,7 +57,11 @@ final class Browser
     {
         $sortItems = [];
         foreach ($this->sort->items as $item) {
-            $sortItems[] = sprintf(" %s %s", $item->field, $item->order->value);
+            if ($item->caseInsensitive) {
+                $sortItems[] = sprintf(" %s COLLATE NOCASE %s", $item->field, $item->order->value);
+            } else {
+                $sortItems[] = sprintf(" %s %s", $item->field, $item->order->value);
+            }
         }
         if (count($sortItems) > 0) {
             return (sprintf(" ORDER BY %s", implode(", ", $sortItems)));

@@ -82,8 +82,8 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, 2, 1);
         $sort = new \aportela\DatabaseBrowserWrapper\Sort(
             [
-                new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC),
-                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC)
+                new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC, false),
+                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
             ]
         );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
