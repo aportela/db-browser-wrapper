@@ -6,7 +6,7 @@ final class SortItem
 {
     public string $field;
     public \aportela\DatabaseBrowserWrapper\Order $order;
-    public bool $caseInsensitive = true;
+    public bool $caseInsensitive = false;
 
     public function __construct(string $field, \aportela\DatabaseBrowserWrapper\Order $order, bool $caseInsensitive)
     {
