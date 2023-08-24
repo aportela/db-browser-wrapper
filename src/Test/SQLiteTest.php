@@ -79,7 +79,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
 
     public function testPaginationEnabled(): void
     {
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, 2, 1);
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 2);
         $sort = new \aportela\DatabaseBrowserWrapper\Sort(
             [
                 new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC, false),
@@ -101,35 +101,94 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $queryCount = sprintf(
             "
                 SELECT %s FROM TABLEV1
+
             ",
             $browser->getQueryCountFields()
         );
         $data = $browser->launch($query, $queryCount);
         $this->assertEquals($data->pager->totalResults, 4);
-        $this->assertEquals($data->pager->totalPages, 4);
-        $this->assertCount(1, $data->items);
-        $this->assertEquals($data->items[0]->id, 3);
-        $this->assertEquals($data->items[0]->name, "JOHN");
-        $this->assertEquals($data->items[0]->age, 24);
+        $this->assertEquals($data->pager->totalPages, 2);
+        $this->assertCount(2, $data->items);
+        $this->assertEquals($data->items[0]->id, 4);
+        $this->assertEquals($data->items[0]->name, "DOE");
+        $this->assertEquals($data->items[0]->age, 32);
+        $this->assertEquals($data->items[1]->id, 3);
+        $this->assertEquals($data->items[1]->name, "JOHN");
+        $this->assertEquals($data->items[1]->age, 24);
     }
 
-    public function testPaginationDisabled(): void
+    public function testPaginationEnabledNoQueryCountRequired(): void
     {
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false);
-        $sort = new \aportela\DatabaseBrowserWrapper\Sort();
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, 2, 3);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC, false),
+                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
+            ]
+        );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
         $query = sprintf(
             "
                 SELECT %s FROM TABLEV1
                 %s
+                %s
             ",
             $browser->getQueryFields(),
+            $browser->getQuerySort(),
+            $pager->getQueryLimit()
+        );
+        // in this "special case" (last page => totalPages = 2, currentPage == 2 && resultsPage == 3) we can avoid executing the count call against the database
+        $queryCount = sprintf(
+            "
+                SELECT %s FROM TABLEV1
+            ",
+            $browser->getQueryCountFields()
+        );
+        $data = $browser->launch($query, $queryCount);
+        $this->assertEquals($data->pager->totalResults, 4);
+        $this->assertEquals($data->pager->totalPages, 2);
+        $this->assertCount(1, $data->items);
+        $this->assertEquals($data->items[0]->id, 1);
+        $this->assertEquals($data->items[0]->name, "FOO");
+        $this->assertEquals($data->items[0]->age, 8);
+    }
+
+    public function testPaginationDisabled(): void
+    {
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("id", \aportela\DatabaseBrowserWrapper\Order::ASC, false),
+            ]
+        );
+        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+        $query = sprintf(
+            "
+                SELECT %s FROM TABLEV1
+                %s
+                %s
+            ",
+            $browser->getQueryFields(),
+            $browser->getQuerySort(),
             $pager->getQueryLimit()
         );
         $data = $browser->launch($query, "");
         $this->assertEquals($data->pager->totalResults, 4);
         $this->assertEquals($data->pager->totalPages, 1);
         $this->assertCount(4, $data->items);
+        $this->assertEquals($data->items[0]->id, 1);
+        $this->assertEquals($data->items[0]->name, "FOO");
+        $this->assertEquals($data->items[0]->age, 8);
+        $this->assertEquals($data->items[1]->id, 2);
+        $this->assertEquals($data->items[1]->name, "BAR");
+        $this->assertEquals($data->items[1]->age, 16);
+        $this->assertEquals($data->items[2]->id, 3);
+        $this->assertEquals($data->items[2]->name, "JOHN");
+        $this->assertEquals($data->items[2]->age, 24);
+        $this->assertEquals($data->items[3]->id, 4);
+        $this->assertEquals($data->items[3]->name, "DOE");
+        $this->assertEquals($data->items[3]->age, 32);
     }
 }
