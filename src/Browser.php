@@ -5,6 +5,7 @@ namespace aportela\DatabaseBrowserWrapper;
 final class Browser
 {
     private \aportela\DatabaseWrapper\DB $dbh;
+    private array $queryParams = [];
     private array $fieldDefinitions = [];
     private array $fieldCountDefition = [];
     private \aportela\DatabaseBrowserWrapper\Pager $pager;
@@ -72,15 +73,20 @@ final class Browser
         }
     }
 
+    public function addDBQueryParam(\aportela\DatabaseWrapper\Param\InterfaceParam $param): void
+    {
+        $this->queryParams[] = $param;
+    }
+
     public function launch(string $query, string $countQuery): \aportela\DatabaseBrowserWrapper\BrowserResults
     {
-        $results = $this->dbh->query($query);
+        $results = $this->dbh->query($query, $this->queryParams);
         $this->pager->totalResults = count($results);
         if (!$this->pager->enabled) {
             $this->pager->totalPages = 1;
         } else {
-            if ($this->pager->totalResults >= $this->pager->resultsPage) {
-                $countResults = $this->dbh->query($countQuery);
+            if ($this->pager->totalResults >= $this->pager->resultsPage || count($this->queryParams) > 0) {
+                $countResults = $this->dbh->query($countQuery, $this->queryParams);
                 $this->pager->totalResults = $countResults[0]->{$this->getQueryCountAlias()};
                 $this->pager->totalPages = ceil($this->pager->totalResults / $this->pager->resultsPage);
             } else {

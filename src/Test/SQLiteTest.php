@@ -191,4 +191,31 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($data->items[3]->name, "DOE");
         $this->assertEquals($data->items[3]->age, 32);
     }
+
+    public function testWithQueryParams(): void
+    {
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort();
+        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+        $browser->addDBQueryParam(new \aportela\DatabaseWrapper\Param\IntegerParam(":id", 3));
+        $query = sprintf(
+            "
+                SELECT %s FROM TABLEV1
+                WHERE id = :id
+                %s
+                %s
+            ",
+            $browser->getQueryFields(),
+            $browser->getQuerySort(),
+            $pager->getQueryLimit()
+        );
+        $data = $browser->launch($query, "");
+        $this->assertEquals($data->pager->totalResults, 1);
+        $this->assertEquals($data->pager->totalPages, 1);
+        $this->assertCount(1, $data->items);
+        $this->assertEquals($data->items[0]->id, 3);
+        $this->assertEquals($data->items[0]->name, "JOHN");
+        $this->assertEquals($data->items[0]->age, 24);
+    }
 }
