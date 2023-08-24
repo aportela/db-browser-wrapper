@@ -13,6 +13,16 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
     private static string $databasePath;
     private static string $upgradeSchemaPath;
 
+    private array $fieldDefinitions = [
+        "id" => "TABLEV1.id",
+        "name" => "TABLEV1.name",
+        "age" => "TABLEV1.age"
+    ];
+
+    private array $fieldCountDefinition = [
+        "totalResults" => "COUNT(TABLEV1.id)"
+    ];
+
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -67,14 +77,12 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-
-
     public function testPaginationEnabled(): void
     {
         $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, 2, 2);
         $sort = new \aportela\DatabaseBrowserWrapper\Sort();
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
-        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $pager, $sort, $filter);
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
         $query = sprintf(
             "
                 SELECT %s FROM TABLEV1
@@ -87,7 +95,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
             "
                 SELECT %s FROM TABLEV1
             ",
-            $browser->getQueryCountFields("id")
+            $browser->getQueryCountFields()
         );
         $data = $browser->launch($query, $queryCount);
         $this->assertEquals($data->pager->totalResults, 4);
@@ -100,7 +108,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $pager = new \aportela\DatabaseBrowserWrapper\Pager(false);
         $sort = new \aportela\DatabaseBrowserWrapper\Sort();
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
-        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $pager, $sort, $filter);
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
         $query = sprintf(
             "
                 SELECT %s FROM TABLEV1

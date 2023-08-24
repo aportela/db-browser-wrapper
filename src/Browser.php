@@ -5,13 +5,25 @@ namespace aportela\DatabaseBrowserWrapper;
 final class Browser
 {
     private \aportela\DatabaseWrapper\DB $dbh;
+    private array $fieldDefinitions = [];
+    private array $fieldCountDefition = [];
     private \aportela\DatabaseBrowserWrapper\Pager $pager;
     private \aportela\DatabaseBrowserWrapper\Sort $sort;
     private \aportela\DatabaseBrowserWrapper\Filter $filter;
 
-    public function __construct(\aportela\DatabaseWrapper\DB $dbh, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter)
+    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions = [], array $fieldCountDefition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter)
     {
         $this->dbh = $dbh;
+        if (count($fieldDefinitions) > 0) {
+            $this->fieldDefinitions = $fieldDefinitions;
+        } else {
+            throw new \Exception("invalid fieldDefinitions");
+        }
+        if (count($fieldCountDefition) == 1) {
+            $this->fieldCountDefition = $fieldCountDefition;
+        } else {
+            throw new \Exception("invalid fieldCountDefition");
+        }
         $this->pager = $pager;
         $this->sort = $sort;
         $this->filter = $filter;
@@ -19,12 +31,26 @@ final class Browser
 
     public function getQueryFields(): string
     {
-        return (implode(", ", [" * "]));
+        $queryFields = array();
+        foreach ($this->fieldDefinitions as $alias => $field) {
+            $queryFields[] = $field . " AS " . $alias;
+        }
+        return (implode(", ", $queryFields));
     }
 
-    public function getQueryCountFields(string $field): string
+    private function getQueryCountSQLField(): string
     {
-        return (sprintf(" COUNT(%s) AS totalResults ", $field));
+        return (current(array_values($this->fieldCountDefition)));
+    }
+
+    private function getQueryCountAlias(): string
+    {
+        return (current(array_keys($this->fieldCountDefition)));
+    }
+
+    public function getQueryCountFields(): string
+    {
+        return (sprintf(" %s AS %s ", $this->getQueryCountSQLField(), $this->getQueryCountAlias()));
     }
 
     public function launch(string $query, string $countQuery): \aportela\DatabaseBrowserWrapper\BrowserResults
@@ -36,7 +62,7 @@ final class Browser
         } else {
             if ($this->pager->totalResults >= $this->pager->resultsPage) {
                 $countResults = $this->dbh->query($countQuery);
-                $this->pager->totalResults = $countResults[0]->totalResults;
+                $this->pager->totalResults = $countResults[0]->{$this->getQueryCountAlias()};
                 $this->pager->totalPages = ceil($this->pager->totalResults / $this->pager->resultsPage);
             } else {
                 if ($this->pager->totalResults == 0) {
