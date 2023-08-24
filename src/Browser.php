@@ -10,8 +10,9 @@ final class Browser
     private \aportela\DatabaseBrowserWrapper\Pager $pager;
     private \aportela\DatabaseBrowserWrapper\Sort $sort;
     private \aportela\DatabaseBrowserWrapper\Filter $filter;
+    private $afterBrowseFunction;
 
-    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter)
+    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, callable $afterBrowseFunction = null)
     {
         $this->dbh = $dbh;
         if (count($fieldDefinitions) > 0) {
@@ -27,6 +28,7 @@ final class Browser
         $this->pager = $pager;
         $this->sort = $sort;
         $this->filter = $filter;
+        $this->afterBrowseFunction = $afterBrowseFunction;
     }
 
     public function getQueryFields(): string
@@ -90,6 +92,9 @@ final class Browser
             }
         }
         $data = new \aportela\DatabaseBrowserWrapper\BrowserResults($this->pager, $this->sort, $this->filter, $results);
+        if ($this->afterBrowseFunction != null && is_callable($this->afterBrowseFunction)) {
+            call_user_func($this->afterBrowseFunction, $data);
+        }
         return ($data);
     }
 }
