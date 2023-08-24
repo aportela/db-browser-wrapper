@@ -53,6 +53,19 @@ final class Browser
         return (sprintf(" %s AS %s ", $this->getQueryCountSQLField(), $this->getQueryCountAlias()));
     }
 
+    public function getQuerySort(): ?string
+    {
+        $sortItems = [];
+        foreach ($this->sort->items as $item) {
+            $sortItems[] = sprintf(" %s %s", $item->field, $item->order->value);
+        }
+        if (count($sortItems) > 0) {
+            return (sprintf(" ORDER BY %s", implode(", ", $sortItems)));
+        } else {
+            return (null);
+        }
+    }
+
     public function launch(string $query, string $countQuery): \aportela\DatabaseBrowserWrapper\BrowserResults
     {
         $results = $this->dbh->query($query);

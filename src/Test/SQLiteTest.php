@@ -79,16 +79,23 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
 
     public function testPaginationEnabled(): void
     {
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, 2, 2);
-        $sort = new \aportela\DatabaseBrowserWrapper\Sort();
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, 2, 1);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC),
+                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC)
+            ]
+        );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
         $query = sprintf(
             "
                 SELECT %s FROM TABLEV1
                 %s
+                %s
             ",
             $browser->getQueryFields(),
+            $browser->getQuerySort(),
             $pager->getQueryLimit()
         );
         $queryCount = sprintf(
@@ -99,8 +106,11 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         );
         $data = $browser->launch($query, $queryCount);
         $this->assertEquals($data->pager->totalResults, 4);
-        $this->assertEquals($data->pager->totalPages, 2);
-        $this->assertCount(2, $data->items);
+        $this->assertEquals($data->pager->totalPages, 4);
+        $this->assertCount(1, $data->items);
+        $this->assertEquals($data->items[0]->id, 3);
+        $this->assertEquals($data->items[0]->name, "JOHN");
+        $this->assertEquals($data->items[0]->age, 24);
     }
 
     public function testPaginationDisabled(): void
