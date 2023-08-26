@@ -60,10 +60,17 @@ final class Browser
     {
         $sortItems = [];
         foreach ($this->sort->items as $item) {
-            if ($item->caseInsensitive) {
-                $sortItems[] = sprintf(" %s COLLATE NOCASE %s", $item->field, $item->order->value);
-            } else {
-                $sortItems[] = sprintf(" %s %s", $item->field, $item->order->value);
+            switch (get_class($item)) {
+                case "aportela\DatabaseBrowserWrapper\SortItem":
+                    if ($item->caseInsensitive) {
+                        $sortItems[] = sprintf(" %s COLLATE NOCASE %s", $item->field, $item->order->value);
+                    } else {
+                        $sortItems[] = sprintf(" %s %s", $item->field, $item->order->value);
+                    }
+                    break;
+                case "aportela\DatabaseBrowserWrapper\SortItemRandom":
+                    $sortItems[] = " RANDOM() ";
+                    break;
             }
         }
         if (count($sortItems) > 0) {

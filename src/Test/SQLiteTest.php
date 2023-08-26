@@ -218,4 +218,32 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($data->items[0]->name, "JOHN");
         $this->assertEquals($data->items[0]->age, 24);
     }
+
+    public function testWithRandomSort(): void
+    {
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItemRandom()
+            ]
+        );
+        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+        $browser->addDBQueryParam(new \aportela\DatabaseWrapper\Param\IntegerParam(":id", 3));
+        $query = sprintf(
+            "
+                SELECT %s FROM TABLEV1
+                WHERE id = :id
+                %s
+                %s
+            ",
+            $browser->getQueryFields(),
+            $browser->getQuerySort(),
+            $pager->getQueryLimit()
+        );
+        $data = $browser->launch($query, "");
+        $this->assertEquals($data->pager->totalResults, 1);
+        $this->assertEquals($data->pager->totalPages, 1);
+        $this->assertCount(1, $data->items);
+    }
 }
