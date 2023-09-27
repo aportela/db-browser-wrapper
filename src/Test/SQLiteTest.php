@@ -246,4 +246,69 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($data->pager->totalPages, 1);
         $this->assertCount(1, $data->items);
     }
+
+    public function testIsSortedByExistentField(): void
+    {
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
+            ]
+        );
+        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+        $this->assertTrue($browser->isSortedBy("myField"));
+    }
+
+    public function testIsSortedByNonExistentField(): void
+    {
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
+            ]
+        );
+        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+        $this->assertFalse($browser->isSortedBy("myOtherField"));
+    }
+
+    public function testGetSortOrderWithExistentCaseInsensitiveField(): void
+    {
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
+            ]
+        );
+        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+        $this->assertEquals($browser->getSortOrder("myField"), " COLLATE NOCASE ASC");
+    }
+
+    public function testGetSortOrderWithExistentCaseSensitiveField(): void
+    {
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::DESC, false)
+            ]
+        );
+        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+        $this->assertEquals($browser->getSortOrder("myField"), " DESC");
+    }
+
+    public function testGetSortOrderWithNonExistentField(): void
+    {
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
+            ]
+        );
+        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+        $this->assertNull($browser->getSortOrder("myOtherField"));
+    }
 }

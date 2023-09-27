@@ -56,6 +56,30 @@ final class Browser
         return (sprintf(" %s AS %s ", $this->getQueryCountSQLField(), $this->getQueryCountAlias()));
     }
 
+    public function isSortedBy(string $fieldName): bool
+    {
+        foreach ($this->sort->items as $item) {
+            if ($item->field == $fieldName) {
+                return (true);
+            }
+        }
+        return (false);
+    }
+
+    public function getSortOrder(string $fieldName): ?string
+    {
+        foreach ($this->sort->items as $item) {
+            if ($item->field == $fieldName) {
+                if ($item->caseInsensitive) {
+                    return (sprintf(" COLLATE NOCASE %s", $item->order->value));
+                } else {
+                    return (sprintf(" %s", $item->order->value));
+                }
+            }
+        }
+        return (null);
+    }
+
     public function getQuerySort(): ?string
     {
         $sortItems = [];
