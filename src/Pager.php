@@ -14,16 +14,30 @@ final class Pager
     {
         $this->enabled = $enabled;
         if ($this->enabled) {
-            $this->currentPageIndex = $currentPage;
-            $this->resultsPage = $resultsPage;
+            if ($currentPage > 0) {
+                $this->currentPageIndex = $currentPage;
+            } else {
+                throw new \Exception("invalid current page index");
+            }
+            if ($resultsPage > 0) {
+                $this->resultsPage = $resultsPage;
+            } else {
+                throw new \Exception("invalid results page");
+            }
         }
     }
 
     public function setTotalResults(int $totalResults): void
     {
-        if ($this->enabled) {
+        if ($totalResults >= 0) {
             $this->totalResults = $totalResults;
-            $this->totalPages = ceil($this->totalResults / $this->resultsPage);
+            if ($this->enabled) {
+                $this->totalPages = ceil($this->totalResults / $this->resultsPage);
+            } else {
+                $this->totalPages = $totalResults > 0 ? 1 : 0;
+            }
+        } else {
+            throw new \Exception("invalid total results");
         }
     }
 
