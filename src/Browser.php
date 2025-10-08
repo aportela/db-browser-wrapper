@@ -5,15 +5,19 @@ namespace aportela\DatabaseBrowserWrapper;
 final class Browser
 {
     private \aportela\DatabaseWrapper\DB $dbh;
+
+    /**
+     * @var array<\aportela\DatabaseWrapper\Param\InterfaceParam>
+     */
     private array $queryParams = [];
     private array $fieldDefinitions = [];
     private array $fieldCountDefition = [];
     private \aportela\DatabaseBrowserWrapper\Pager $pager;
     private \aportela\DatabaseBrowserWrapper\Sort $sort;
     private \aportela\DatabaseBrowserWrapper\Filter $filter;
-    private $afterBrowseFunction;
+    private  $afterBrowseFunction;
 
-    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, callable $afterBrowseFunction = null)
+    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
     {
         $this->dbh = $dbh;
         if (count($fieldDefinitions) > 0) {
