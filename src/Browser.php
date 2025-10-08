@@ -10,13 +10,23 @@ final class Browser
      * @var array<\aportela\DatabaseWrapper\Param\InterfaceParam>
      */
     private array $queryParams = [];
+    /**
+     * @var array<string, string>
+     */
     private array $fieldDefinitions = [];
+    /**
+     * @var array<string, string>
+     */
     private array $fieldCountDefinition = [];
     private \aportela\DatabaseBrowserWrapper\Pager $pager;
     private \aportela\DatabaseBrowserWrapper\Sort $sort;
     private \aportela\DatabaseBrowserWrapper\Filter $filter;
-    private  $afterBrowseFunction;
+    private mixed $afterBrowseFunction;
 
+    /**
+     * @param array<string, string> $fieldDefinitions
+     * @param array<string, string> $fieldCountDefinition
+     */
     public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefinition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
     {
         $this->dbh = $dbh;
@@ -113,6 +123,9 @@ final class Browser
         $this->queryParams[] = $param;
     }
 
+    /**
+     * @param array<\aportela\DatabaseWrapper\Param\InterfaceParam> $params
+     */
     public function addDBQueryParams(array $params = []): void
     {
         foreach ($params as $param) {
