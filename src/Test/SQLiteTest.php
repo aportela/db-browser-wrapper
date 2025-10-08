@@ -13,12 +13,18 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
     private static string $databasePath;
     private static string $upgradeSchemaPath;
 
+    /**
+     * @var array<string, string>
+     */
     private array $fieldDefinitions = [
         "id" => "TABLEV1.id",
         "name" => "TABLEV1.name",
         "age" => "TABLEV1.age"
     ];
 
+    /**
+     * @var array<string, string>
+     */
     private array $fieldCountDefinition = [
         "totalResults" => "COUNT(TABLEV1.id)"
     ];
