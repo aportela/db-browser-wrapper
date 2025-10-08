@@ -11,13 +11,13 @@ final class Browser
      */
     private array $queryParams = [];
     private array $fieldDefinitions = [];
-    private array $fieldCountDefition = [];
+    private array $fieldCountDefinition = [];
     private \aportela\DatabaseBrowserWrapper\Pager $pager;
     private \aportela\DatabaseBrowserWrapper\Sort $sort;
     private \aportela\DatabaseBrowserWrapper\Filter $filter;
     private  $afterBrowseFunction;
 
-    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
+    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefinition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
     {
         $this->dbh = $dbh;
         if (count($fieldDefinitions) > 0) {
@@ -25,10 +25,10 @@ final class Browser
         } else {
             throw new \Exception("invalid fieldDefinitions");
         }
-        if (count($fieldCountDefition) == 1) {
-            $this->fieldCountDefition = $fieldCountDefition;
+        if (count($fieldCountDefinition) == 1) {
+            $this->fieldCountDefinition = $fieldCountDefinition;
         } else {
-            throw new \Exception("invalid fieldCountDefition");
+            throw new \Exception("invalid fieldCountDefinition");
         }
         $this->pager = $pager;
         $this->sort = $sort;
@@ -47,12 +47,12 @@ final class Browser
 
     private function getQueryCountSQLField(): string
     {
-        return (current(array_values($this->fieldCountDefition)));
+        return (current(array_values($this->fieldCountDefinition)));
     }
 
     private function getQueryCountAlias(): string
     {
-        return (current(array_keys($this->fieldCountDefition)));
+        return (current(array_keys($this->fieldCountDefinition)));
     }
 
     public function getQueryCountFields(): string
