@@ -17,7 +17,7 @@ final class Browser
     /**
      * @var array<string, string>
      */
-    private array $fieldCountDefinition = [];
+    private ?array $fieldCountDefinition = [];
     private \aportela\DatabaseBrowserWrapper\Pager $pager;
     private \aportela\DatabaseBrowserWrapper\Sort $sort;
     private \aportela\DatabaseBrowserWrapper\Filter $filter;
@@ -27,7 +27,7 @@ final class Browser
      * @param array<string, string> $fieldDefinitions
      * @param array<string, string> $fieldCountDefinition
      */
-    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, array $fieldCountDefinition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
+    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, ?array $fieldCountDefinition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
     {
         $this->dbh = $dbh;
         if (count($fieldDefinitions) > 0) {
@@ -35,10 +35,12 @@ final class Browser
         } else {
             throw new \Exception("invalid fieldDefinitions");
         }
-        if (count($fieldCountDefinition) == 1) {
-            $this->fieldCountDefinition = $fieldCountDefinition;
-        } else {
-            throw new \Exception("invalid fieldCountDefinition");
+        if ($pager->enabled) {
+            if (count($fieldCountDefinition) == 1) {
+                $this->fieldCountDefinition = $fieldCountDefinition;
+            } else {
+                throw new \Exception("invalid fieldCountDefinition");
+            }
         }
         $this->pager = $pager;
         $this->sort = $sort;
@@ -57,17 +59,29 @@ final class Browser
 
     private function getQueryCountSQLField(): string
     {
-        return (current(array_values($this->fieldCountDefinition)));
+        if ($this->pager->enabled) {
+            return (current(array_values($this->fieldCountDefinition)));
+        } else {
+            throw new \Exception("pager is disabled");
+        }
     }
 
     private function getQueryCountAlias(): string
     {
-        return (current(array_keys($this->fieldCountDefinition)));
+        if ($this->pager->enabled) {
+            return (current(array_keys($this->fieldCountDefinition)));
+        } else {
+            throw new \Exception("pager is disabled");
+        }
     }
 
     public function getQueryCountFields(): string
     {
-        return (sprintf(" %s AS %s ", $this->getQueryCountSQLField(), $this->getQueryCountAlias()));
+        if ($this->pager->enabled) {
+            return (sprintf(" %s AS %s ", $this->getQueryCountSQLField(), $this->getQueryCountAlias()));
+        } else {
+            throw new \Exception("pager is disabled");
+        }
     }
 
     public function isSortedBy(string $fieldName): bool
@@ -107,6 +121,7 @@ final class Browser
                     }
                     break;
                 case "aportela\DatabaseBrowserWrapper\SortItemRandom":
+                    // TODO: SQLITE / MARIADB / POSTGRESQL
                     $sortItems[] = " RANDOM() ";
                     break;
             }
