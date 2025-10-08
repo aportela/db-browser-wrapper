@@ -109,6 +109,13 @@ final class Browser
         $this->queryParams[] = $param;
     }
 
+    public function addDBQueryParams(array $params = []): void
+    {
+        foreach ($params as $param) {
+            $this->queryParams[] = $param;
+        }
+    }
+
     public function launch(string $query, string $countQuery): \aportela\DatabaseBrowserWrapper\BrowserResults
     {
         $results = $this->dbh->query($query, $this->queryParams);
