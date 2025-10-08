@@ -32,7 +32,7 @@ final class Pager
         if ($totalResults >= 0) {
             $this->totalResults = $totalResults;
             if ($this->enabled) {
-                $this->totalPages = ceil($this->totalResults / $this->resultsPage);
+                $this->totalPages = intval(ceil($this->totalResults / $this->resultsPage));
             } else {
                 $this->totalPages = $totalResults > 0 ? 1 : 0;
             }
