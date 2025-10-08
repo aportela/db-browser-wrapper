@@ -4,9 +4,9 @@ namespace aportela\DatabaseBrowserWrapper;
 
 final class BrowserResults
 {
-    public \aportela\DatabaseBrowserWrapper\Pager $pager;
-    public \aportela\DatabaseBrowserWrapper\Sort $sort;
     public \aportela\DatabaseBrowserWrapper\Filter $filter;
+    public \aportela\DatabaseBrowserWrapper\Sort $sort;
+    public \aportela\DatabaseBrowserWrapper\Pager $pager;
     /**
      * @var array<mixed>
      */
@@ -15,11 +15,11 @@ final class BrowserResults
     /**
      * @param array<mixed> $items
      */
-    public function __construct(\aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, array $items = [])
+    public function __construct(\aportela\DatabaseBrowserWrapper\Filter $filter, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Pager $pager, array $items = [])
     {
-        $this->pager = $pager;
-        $this->sort = $sort;
         $this->filter = $filter;
+        $this->sort = $sort;
+        $this->pager = $pager;
         $this->items = $items;
     }
 }

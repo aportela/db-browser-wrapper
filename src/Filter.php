@@ -2,12 +2,13 @@
 
 namespace aportela\DatabaseBrowserWrapper;
 
+// TODO: document this
 final class Filter implements \JsonSerializable
 {
     /**
      * @var array<mixed>
      */
-    public array $originalParams = [];
+    private array $originalParams = [];
 
 
     public function jsonSerialize(): mixed

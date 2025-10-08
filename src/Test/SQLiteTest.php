@@ -102,7 +102,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
             ",
             $browser->getQueryFields(),
             $browser->getQuerySort(),
-            $pager->getQueryLimit()
+            $browser->getQueryPager()
         );
         $queryCount = sprintf(
             "
@@ -112,8 +112,8 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
             $browser->getQueryCountFields()
         );
         $data = $browser->launch($query, $queryCount);
-        $this->assertEquals($data->pager->totalResults, 4);
-        $this->assertEquals($data->pager->totalPages, 2);
+        $this->assertEquals($data->pager->getTotalResults(), 4);
+        $this->assertEquals($data->pager->getTotalPages(), 2);
         $this->assertCount(2, $data->items);
         $this->assertEquals($data->items[0]->id, 4);
         $this->assertEquals($data->items[0]->name, "DOE");
@@ -142,7 +142,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
             ",
             $browser->getQueryFields(),
             $browser->getQuerySort(),
-            $pager->getQueryLimit()
+            $browser->getQueryPager()
         );
         // in this "special case" (last page => totalPages = 2, currentPage == 2 && resultsPage == 3) we can avoid executing the count call against the database
         $queryCount = sprintf(
@@ -152,8 +152,8 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
             $browser->getQueryCountFields()
         );
         $data = $browser->launch($query, $queryCount);
-        $this->assertEquals($data->pager->totalResults, 4);
-        $this->assertEquals($data->pager->totalPages, 2);
+        $this->assertEquals($data->pager->getTotalResults(), 4);
+        $this->assertEquals($data->pager->getTotalPages(), 2);
         $this->assertCount(1, $data->items);
         $this->assertEquals($data->items[0]->id, 1);
         $this->assertEquals($data->items[0]->name, "FOO");
@@ -178,11 +178,11 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
             ",
             $browser->getQueryFields(),
             $browser->getQuerySort(),
-            $pager->getQueryLimit()
+            $browser->getQueryPager()
         );
         $data = $browser->launch($query, "");
-        $this->assertEquals($data->pager->totalResults, 4);
-        $this->assertEquals($data->pager->totalPages, 1);
+        $this->assertEquals($data->pager->getTotalResults(), 4);
+        $this->assertEquals($data->pager->getTotalPages(), 1);
         $this->assertCount(4, $data->items);
         $this->assertEquals($data->items[0]->id, 1);
         $this->assertEquals($data->items[0]->name, "FOO");
@@ -214,11 +214,11 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
             ",
             $browser->getQueryFields(),
             $browser->getQuerySort(),
-            $pager->getQueryLimit()
+            $browser->getQueryPager()
         );
         $data = $browser->launch($query, "");
-        $this->assertEquals($data->pager->totalResults, 1);
-        $this->assertEquals($data->pager->totalPages, 1);
+        $this->assertEquals($data->pager->getTotalResults(), 1);
+        $this->assertEquals($data->pager->getTotalPages(), 1);
         $this->assertCount(1, $data->items);
         $this->assertEquals($data->items[0]->id, 3);
         $this->assertEquals($data->items[0]->name, "JOHN");
@@ -245,76 +245,11 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
             ",
             $browser->getQueryFields(),
             $browser->getQuerySort(),
-            $pager->getQueryLimit()
+            $browser->getQueryPager()
         );
         $data = $browser->launch($query, "");
-        $this->assertEquals($data->pager->totalResults, 1);
-        $this->assertEquals($data->pager->totalPages, 1);
+        $this->assertEquals($data->pager->getTotalResults(), 1);
+        $this->assertEquals($data->pager->getTotalPages(), 1);
         $this->assertCount(1, $data->items);
-    }
-
-    public function testIsSortedByExistentField(): void
-    {
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
-        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
-            [
-                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
-            ]
-        );
-        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
-        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
-        $this->assertTrue($browser->isSortedBy("myField"));
-    }
-
-    public function testIsSortedByNonExistentField(): void
-    {
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
-        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
-            [
-                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
-            ]
-        );
-        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
-        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
-        $this->assertFalse($browser->isSortedBy("myOtherField"));
-    }
-
-    public function testGetSortOrderWithExistentCaseInsensitiveField(): void
-    {
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
-        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
-            [
-                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
-            ]
-        );
-        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
-        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
-        $this->assertEquals($browser->getSortOrder("myField"), " COLLATE NOCASE ASC");
-    }
-
-    public function testGetSortOrderWithExistentCaseSensitiveField(): void
-    {
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
-        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
-            [
-                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::DESC, false)
-            ]
-        );
-        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
-        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
-        $this->assertEquals($browser->getSortOrder("myField"), " DESC");
-    }
-
-    public function testGetSortOrderWithNonExistentField(): void
-    {
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
-        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
-            [
-                new \aportela\DatabaseBrowserWrapper\SortItem("myField", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
-            ]
-        );
-        $filter = new \aportela\DatabaseBrowserWrapper\Filter();
-        $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
-        $this->assertNull($browser->getSortOrder("myOtherField"));
     }
 }

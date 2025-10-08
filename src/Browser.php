@@ -35,7 +35,7 @@ final class Browser
         } else {
             throw new \Exception("invalid fieldDefinitions");
         }
-        if ($pager->enabled) {
+        if ($pager->isEnabled()) {
             if (count($fieldCountDefinition) == 1) {
                 $this->fieldCountDefinition = $fieldCountDefinition;
             } else {
@@ -59,7 +59,7 @@ final class Browser
 
     private function getQueryCountSQLField(): string
     {
-        if ($this->pager->enabled) {
+        if ($this->pager->isEnabled()) {
             return (current(array_values($this->fieldCountDefinition)));
         } else {
             throw new \Exception("pager is disabled");
@@ -68,7 +68,7 @@ final class Browser
 
     private function getQueryCountAlias(): string
     {
-        if ($this->pager->enabled) {
+        if ($this->pager->isEnabled()) {
             return (current(array_keys($this->fieldCountDefinition)));
         } else {
             throw new \Exception("pager is disabled");
@@ -77,60 +77,21 @@ final class Browser
 
     public function getQueryCountFields(): string
     {
-        if ($this->pager->enabled) {
+        if ($this->pager->isEnabled()) {
             return (sprintf(" %s AS %s ", $this->getQueryCountSQLField(), $this->getQueryCountAlias()));
         } else {
             throw new \Exception("pager is disabled");
         }
     }
 
-    public function isSortedBy(string $fieldName): bool
-    {
-        foreach ($this->sort->items as $item) {
-            if ($item->field == $fieldName) {
-                return (true);
-            }
-        }
-        return (false);
-    }
-
-    public function getSortOrder(string $fieldName): ?string
-    {
-        foreach ($this->sort->items as $item) {
-            if ($item->field == $fieldName) {
-                if ($item->caseInsensitive) {
-                    return (sprintf(" COLLATE NOCASE %s", $item->order->value));
-                } else {
-                    return (sprintf(" %s", $item->order->value));
-                }
-            }
-        }
-        return (null);
-    }
-
     public function getQuerySort(): ?string
     {
-        $sortItems = [];
-        foreach ($this->sort->items as $item) {
-            switch (get_class($item)) {
-                case "aportela\DatabaseBrowserWrapper\SortItem":
-                    if ($item->caseInsensitive) {
-                        $sortItems[] = sprintf(" %s COLLATE NOCASE %s", $item->field, $item->order->value);
-                    } else {
-                        $sortItems[] = sprintf(" %s %s", $item->field, $item->order->value);
-                    }
-                    break;
-                case "aportela\DatabaseBrowserWrapper\SortItemRandom":
-                    // TODO: SQLITE / MARIADB / POSTGRESQL
-                    $sortItems[] = " RANDOM() ";
-                    break;
-            }
-        }
-        if (count($sortItems) > 0) {
-            return (sprintf(" ORDER BY %s", implode(", ", $sortItems)));
-        } else {
-            return (null);
-        }
+        return ($this->sort->getQuery());
+    }
+
+    public function getQueryPager(): ?string
+    {
+        return ($this->pager->getQuery());
     }
 
     public function addDBQueryParam(\aportela\DatabaseWrapper\Param\InterfaceParam $param): void
@@ -151,24 +112,28 @@ final class Browser
     public function launch(string $query, string $countQuery): \aportela\DatabaseBrowserWrapper\BrowserResults
     {
         $results = $this->dbh->query($query, $this->queryParams);
-        $this->pager->totalResults = count($results);
-        if (!$this->pager->enabled) {
-            $this->pager->totalPages = 1;
+        $this->pager->setTotalResults(count($results));
+        if (!$this->pager->isEnabled()) {
+            $this->pager->setTotalPages(1);
         } else {
-            if ($this->pager->totalResults >= $this->pager->resultsPage || count($this->queryParams) > 0) {
+            // WHY count($this->queryParams) > 0 ???
+            if ($this->pager->getTotalResults() >= $this->pager->getResultsPage() || count($this->queryParams) > 0) {
                 $countResults = $this->dbh->query($countQuery, $this->queryParams);
-                $this->pager->totalResults = $countResults[0]->{$this->getQueryCountAlias()};
-                $this->pager->totalPages = intval(ceil($this->pager->totalResults / $this->pager->resultsPage));
+                $this->pager->setTotalResults($countResults[0]->{$this->getQueryCountAlias()});
+                $this->pager->setTotalPages(intval(ceil($this->pager->getTotalResults() / $this->pager->getResultsPage())));
             } else {
-                if ($this->pager->totalResults == 0) {
-                    $this->pager->totalPages = 0;
+                if ($this->pager->getTotalResults() == 0) {
+                    $this->pager->setTotalPages(0);
                 } else {
-                    $this->pager->totalResults += $this->pager->resultsPage * ($this->pager->currentPageIndex - 1);
-                    $this->pager->totalPages = $this->pager->currentPageIndex;
+                    $this->pager->setTotalResults(
+                        $this->pager->getTotalResults() +
+                            ($this->pager->getResultsPage() * ($this->pager->getCurrentPageIndex() - 1))
+                    );
+                    $this->pager->setTotalPages($this->pager->getCurrentPageIndex());
                 }
             }
         }
-        $data = new \aportela\DatabaseBrowserWrapper\BrowserResults($this->pager, $this->sort, $this->filter, $results);
+        $data = new \aportela\DatabaseBrowserWrapper\BrowserResults($this->filter, $this->sort, $this->pager, $results);
         if ($this->afterBrowseFunction != null && is_callable($this->afterBrowseFunction)) {
             call_user_func($this->afterBrowseFunction, $data);
         }
