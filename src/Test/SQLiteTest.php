@@ -94,22 +94,18 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
-        $query = sprintf(
+        $query = $browser->buildQuery(
             "
                 SELECT %s FROM TABLEV1
                 %s
                 %s
-            ",
-            $browser->getQueryFields(),
-            $browser->getQuerySort(self::$db->getAdapterType()),
-            $browser->getQueryPager(self::$db->getAdapterType())
+            "
         );
-        $queryCount = sprintf(
+        $queryCount = $browser->buildQueryCount(
             "
                 SELECT %s FROM TABLEV1
 
-            ",
-            $browser->getQueryCountFields()
+            "
         );
         $data = $browser->launch($query, $queryCount);
         $this->assertEquals($data->pager->getTotalResults(), 4);
@@ -134,22 +130,18 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
-        $query = sprintf(
+        $query = $browser->buildQuery(
             "
                 SELECT %s FROM TABLEV1
                 %s
                 %s
-            ",
-            $browser->getQueryFields(),
-            $browser->getQuerySort(self::$db->getAdapterType()),
-            $browser->getQueryPager(self::$db->getAdapterType())
+            "
         );
         // in this "special case" (last page => totalPages = 2, currentPage == 2 && resultsPage == 3) we can avoid executing the count call against the database
-        $queryCount = sprintf(
+        $queryCount = $browser->buildQueryCount(
             "
                 SELECT %s FROM TABLEV1
-            ",
-            $browser->getQueryCountFields()
+            "
         );
         $data = $browser->launch($query, $queryCount);
         $this->assertEquals($data->pager->getTotalResults(), 4);
@@ -170,15 +162,12 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
-        $query = sprintf(
+        $query = $browser->buildQuery(
             "
                 SELECT %s FROM TABLEV1
                 %s
                 %s
-            ",
-            $browser->getQueryFields(),
-            $browser->getQuerySort(self::$db->getAdapterType()),
-            $browser->getQueryPager(self::$db->getAdapterType())
+            "
         );
         $data = $browser->launch($query, "");
         $this->assertEquals($data->pager->getTotalResults(), 4);
@@ -205,16 +194,13 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
         $browser->addDBQueryParam(new \aportela\DatabaseWrapper\Param\IntegerParam(":id", 3));
-        $query = sprintf(
+        $query = $browser->buildQuery(
             "
                 SELECT %s FROM TABLEV1
                 WHERE id = :id
                 %s
                 %s
-            ",
-            $browser->getQueryFields(),
-            $browser->getQuerySort(self::$db->getAdapterType()),
-            $browser->getQueryPager(self::$db->getAdapterType())
+            "
         );
         $data = $browser->launch($query, "");
         $this->assertEquals($data->pager->getTotalResults(), 1);
@@ -236,16 +222,13 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
         $browser->addDBQueryParam(new \aportela\DatabaseWrapper\Param\IntegerParam(":id", 3));
-        $query = sprintf(
+        $query = $browser->buildQuery(
             "
                 SELECT %s FROM TABLEV1
                 WHERE id = :id
                 %s
                 %s
-            ",
-            $browser->getQueryFields(),
-            $browser->getQuerySort(self::$db->getAdapterType()),
-            $browser->getQueryPager(self::$db->getAdapterType())
+            "
         );
         $data = $browser->launch($query, "");
         $this->assertEquals($data->pager->getTotalResults(), 1);

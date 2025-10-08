@@ -48,7 +48,7 @@ final class Browser
         $this->afterBrowseFunction = $afterBrowseFunction;
     }
 
-    public function getQueryFields(): string
+    private function getQueryFields(): string
     {
         $queryFields = array();
         foreach ($this->fieldDefinitions as $alias => $field) {
@@ -75,7 +75,7 @@ final class Browser
         }
     }
 
-    public function getQueryCountFields(): string
+    private function getQueryCountFields(): string
     {
         if ($this->pager->isEnabled()) {
             return (sprintf(" %s AS %s ", $this->getQueryCountSQLField(), $this->getQueryCountAlias()));
@@ -84,14 +84,32 @@ final class Browser
         }
     }
 
-    public function getQuerySort(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
+    private function getQuerySort(): ?string
     {
-        return ($this->sort->getQuery($adapterType));
+        return ($this->sort->getQuery($this->dbh->getAdapterType()));
     }
 
-    public function getQueryPager(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
+    private function getQueryPager(): ?string
     {
-        return ($this->pager->getQuery($adapterType));
+        return ($this->pager->getQuery($this->dbh->getAdapterType()));
+    }
+
+    public function buildQuery($sql): string
+    {
+        return (sprintf(
+            $sql,
+            $this->getQueryFields(),
+            $this->getQuerySort(),
+            $this->getQueryPager()
+        ));
+    }
+
+    public function buildQueryCount($sql): string
+    {
+        return (sprintf(
+            $sql,
+            $this->getQueryCountFields()
+        ));
     }
 
     public function addDBQueryParam(\aportela\DatabaseWrapper\Param\InterfaceParam $param): void
