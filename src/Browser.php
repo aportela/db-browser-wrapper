@@ -130,7 +130,7 @@ final class Browser
             if ($this->pager->totalResults >= $this->pager->resultsPage || count($this->queryParams) > 0) {
                 $countResults = $this->dbh->query($countQuery, $this->queryParams);
                 $this->pager->totalResults = $countResults[0]->{$this->getQueryCountAlias()};
-                $this->pager->totalPages = ceil($this->pager->totalResults / $this->pager->resultsPage);
+                $this->pager->totalPages = intval(ceil($this->pager->totalResults / $this->pager->resultsPage));
             } else {
                 if ($this->pager->totalResults == 0) {
                     $this->pager->totalPages = 0;
