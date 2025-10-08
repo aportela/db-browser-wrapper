@@ -101,8 +101,8 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 %s
             ",
             $browser->getQueryFields(),
-            $browser->getQuerySort(),
-            $browser->getQueryPager()
+            $browser->getQuerySort(self::$db->getAdapterType()),
+            $browser->getQueryPager(self::$db->getAdapterType())
         );
         $queryCount = sprintf(
             "
@@ -141,8 +141,8 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 %s
             ",
             $browser->getQueryFields(),
-            $browser->getQuerySort(),
-            $browser->getQueryPager()
+            $browser->getQuerySort(self::$db->getAdapterType()),
+            $browser->getQueryPager(self::$db->getAdapterType())
         );
         // in this "special case" (last page => totalPages = 2, currentPage == 2 && resultsPage == 3) we can avoid executing the count call against the database
         $queryCount = sprintf(
@@ -177,8 +177,8 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 %s
             ",
             $browser->getQueryFields(),
-            $browser->getQuerySort(),
-            $browser->getQueryPager()
+            $browser->getQuerySort(self::$db->getAdapterType()),
+            $browser->getQueryPager(self::$db->getAdapterType())
         );
         $data = $browser->launch($query, "");
         $this->assertEquals($data->pager->getTotalResults(), 4);
@@ -213,8 +213,8 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 %s
             ",
             $browser->getQueryFields(),
-            $browser->getQuerySort(),
-            $browser->getQueryPager()
+            $browser->getQuerySort(self::$db->getAdapterType()),
+            $browser->getQueryPager(self::$db->getAdapterType())
         );
         $data = $browser->launch($query, "");
         $this->assertEquals($data->pager->getTotalResults(), 1);
@@ -244,8 +244,8 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 %s
             ",
             $browser->getQueryFields(),
-            $browser->getQuerySort(),
-            $browser->getQueryPager()
+            $browser->getQuerySort(self::$db->getAdapterType()),
+            $browser->getQueryPager(self::$db->getAdapterType())
         );
         $data = $browser->launch($query, "");
         $this->assertEquals($data->pager->getTotalResults(), 1);

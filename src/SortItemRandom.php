@@ -2,15 +2,25 @@
 
 namespace aportela\DatabaseBrowserWrapper;
 
-final class SortItemRandom extends SortItemBase
+final class SortItemRandom implements InterfaceSortItem
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    public function __construct() {}
 
-    public function getQuery(): string
+    public function getQuery(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
     {
-        return (" RANDOM() ");
+        switch ($adapterType) {
+            case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_SQLite:
+                return (" RANDOM() ");
+                break;
+            case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_MariaDB:
+                return (" RAND() ");
+                break;
+            case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_PostgreSQL:
+                return (" RANDOM() ");
+                break;
+            default:
+                return (null);
+                break;
+        }
     }
 }

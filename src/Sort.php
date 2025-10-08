@@ -5,24 +5,24 @@ namespace aportela\DatabaseBrowserWrapper;
 final class Sort
 {
     /**
-     * @var array <\aportela\DatabaseBrowserWrapper\SortItemBase>
+     * @var array <\aportela\DatabaseBrowserWrapper\InterfaceSortItem>
      *
      */
     private array $items = [];
 
     /**
-     * @param array<\aportela\DatabaseBrowserWrapper\SortItemBase> $items
+     * @param array<\aportela\DatabaseBrowserWrapper\InterfaceSortItem> $items
      */
     public function __construct(array $items = [])
     {
         $this->items = $items;
     }
 
-    public function getQuery(): ?string
+    public function getQuery(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
     {
         $sortItems = [];
         foreach ($this->items as $item) {
-            $sortItems[] = $item->getQuery();
+            $sortItems[] = $item->getQuery($adapterType);
         }
         if (count($sortItems) > 0) {
             return (sprintf(" ORDER BY %s", implode(", ", $sortItems)));

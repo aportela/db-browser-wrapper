@@ -84,14 +84,14 @@ final class Browser
         }
     }
 
-    public function getQuerySort(): ?string
+    public function getQuerySort(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
     {
-        return ($this->sort->getQuery());
+        return ($this->sort->getQuery($adapterType));
     }
 
-    public function getQueryPager(): ?string
+    public function getQueryPager(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
     {
-        return ($this->pager->getQuery());
+        return ($this->pager->getQuery($adapterType));
     }
 
     public function addDBQueryParam(\aportela\DatabaseWrapper\Param\InterfaceParam $param): void

@@ -84,12 +84,26 @@ final class Pager
         }
     }
 
-    public function getQuery(): ?string
+    public function getQuery(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
     {
         if ($this->enabled) {
-            // TODO: sqlite && mariadb && postgresql
-            $start = ($this->currentPageIndex - 1) * $this->resultsPage;
-            return (sprintf(" LIMIT %d, %d ", $start, $this->resultsPage));
+            switch ($adapterType) {
+                case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_SQLite:
+                    $start = ($this->currentPageIndex - 1) * $this->resultsPage;
+                    return (sprintf(" LIMIT %d, %d ", $start, $this->resultsPage));
+                    break;
+                case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_MariaDB:
+                    $start = ($this->currentPageIndex - 1) * $this->resultsPage;
+                    return (sprintf(" LIMIT %d OFFSET %d ", $this->resultsPage, $start));
+                    break;
+                case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_PostgreSQL:
+                    $start = ($this->currentPageIndex - 1) * $this->resultsPage;
+                    return (sprintf(" LIMIT %d OFFSET %d ", $this->resultsPage, $start));
+                    break;
+                default:
+                    return (null);
+                    break;
+            }
         } else {
             return (null);
         }
