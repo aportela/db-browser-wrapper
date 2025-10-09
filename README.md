@@ -4,7 +4,7 @@ Custom php (pdo) database element browsing wrapper
 
 ## Requirements
 
-- mininum php version 8.x
+- mininum php version 8.4
 
 ## Limitations
 
