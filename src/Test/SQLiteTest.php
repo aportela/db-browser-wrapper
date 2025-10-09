@@ -55,7 +55,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         file_put_contents(self::$upgradeSchemaPath, trim($upgradeSchema));
         // main object
         self::$db = new \aportela\DatabaseWrapper\DB(
-            new \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter(self::$databasePath, self::$upgradeSchemaPath),
+            new \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter(self::$databasePath, self::$upgradeSchemaPath, \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_JOURNAL_WAL),
             new \Psr\Log\NullLogger()
         );
     }
@@ -80,7 +80,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
     {
         parent::tearDownAfterClass();
         if (file_exists(self::$databasePath)) {
-            //unlink(self::$databasePath); // TODO: (Resource temporarily unavailable)
+            unlink(self::$databasePath);
         }
     }
 
@@ -235,5 +235,12 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($data->pager->getTotalResults(), 1);
         $this->assertEquals($data->pager->getTotalPages(), 1);
         $this->assertCount(1, $data->items);
+    }
+
+    // this needs to be the final test
+    public function testCloseAtEnd(): void
+    {
+        $this->expectNotToPerformAssertions();
+        self::$db->close();
     }
 }
