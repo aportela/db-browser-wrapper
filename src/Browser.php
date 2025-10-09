@@ -94,7 +94,17 @@ final class Browser
         return ($this->pager->getQuery($this->dbh->getAdapterType()));
     }
 
-    public function buildQuery($sql): string
+    /**
+     * build / complete query with $fieldDefinitions, $pager & $sort set on constructor
+     *
+     * you must supply a query with three "%s" ex:
+     * 1st: query fields
+     * 2st: sort block
+     * 3rd: pagination block
+     *
+     * SELECT %s FROM TABLEV1 WHERE 1 = 1 %s %s
+     */
+    public function buildQuery(string $sql): string
     {
         return (sprintf(
             $sql,
@@ -104,7 +114,15 @@ final class Browser
         ));
     }
 
-    public function buildQueryCount($sql): string
+    /**
+     * build / complete (COUNT) query with $fieldCountDefinition set on constructor
+     *
+     * you must supply a query with one "%s" ex:
+     * 1st: query fields
+     *
+     * SELECT %s FROM TABLEV1 WHERE 1 = 1
+     */
+    public function buildQueryCount(string $sql): string
     {
         return (sprintf(
             $sql,
