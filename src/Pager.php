@@ -70,14 +70,16 @@ final class Pager
         return ($this->totalResults);
     }
 
-    public function setTotalResults(int $totalResults): void
+    public function setTotalResults(int $totalResults, bool $rebuildTotalPages = false): void
     {
         if ($totalResults >= 0) {
             $this->totalResults = $totalResults;
-            if ($this->enabled) {
-                $this->totalPages = intval(ceil($this->totalResults / $this->resultsPage));
-            } else {
-                $this->totalPages = $totalResults > 0 ? 1 : 0;
+            if ($rebuildTotalPages) {
+                if ($this->enabled) {
+                    $this->totalPages = intval(ceil($this->totalResults / $this->resultsPage));
+                } else {
+                    $this->totalPages = $totalResults > 0 ? 1 : 0;
+                }
             }
         } else {
             throw new \Exception("invalid totalResults (negative) value");
