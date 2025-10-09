@@ -69,7 +69,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         parent::setUp();
         if (!self::$db->isSchemaInstalled()) {
             self::$db->installSchema();
-            self::$db->upgradeSchema(true);
+            self::$db->upgradeSchema(false);
         }
     }
 
