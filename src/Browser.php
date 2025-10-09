@@ -145,28 +145,54 @@ final class Browser
         }
     }
 
-    public function launch(string $query, string $countQuery): \aportela\DatabaseBrowserWrapper\BrowserResults
+    public function launch(string $query, string $countQuery, bool $skipCount = false): \aportela\DatabaseBrowserWrapper\BrowserResults
     {
+        $countRequired = false;
         $results = $this->dbh->query($query, $this->queryParams);
-        $this->pager->setTotalResults(count($results));
+        $totalQueryResults = count($results);
         if (!$this->pager->isEnabled()) {
-            $this->pager->setTotalPages(1);
+            // if pager is disabled, total results is length of main query results array
+            $this->pager->setTotalResults($totalQueryResults);
+            $this->pager->setTotalPages($totalQueryResults > 0 ? 1 : 0);
         } else {
-            // WHY count($this->queryParams) > 0 ???
-            if ($this->pager->getTotalResults() >= $this->pager->getResultsPage() || count($this->queryParams) > 0) {
-                $countResults = $this->dbh->query($countQuery, $this->queryParams);
-                $this->pager->setTotalResults($countResults[0]->{$this->getQueryCountAlias()});
-                $this->pager->setTotalPages(intval(ceil($this->pager->getTotalResults() / $this->pager->getResultsPage())));
-            } else {
-                if ($this->pager->getTotalResults() == 0) {
-                    $this->pager->setTotalPages(0);
+            // pager is enabled
+            if ($this->pager->getCurrentPageIndex() == 1) {
+                // requested first page
+                if ($totalQueryResults >= $this->pager->getResultsPage()) {
+                    // main query results array length >= resultsPage
+                    // we are not sure that this page is last, so count is required
+                    $countRequired = true;
                 } else {
-                    $this->pager->setTotalResults(
-                        $this->pager->getTotalResults() +
-                            ($this->pager->getResultsPage() * ($this->pager->getCurrentPageIndex() - 1))
-                    );
-                    $this->pager->setTotalPages($this->pager->getCurrentPageIndex());
+                    // main query results array length < resultsPage
+                    // this first page is the unique/last page
+                    $this->pager->setTotalResults($totalQueryResults);
+                    $this->pager->setTotalPages($totalQueryResults > 0 ? 1 : 0);
                 }
+            } elseif ($this->pager->getCurrentPageIndex() > 1) {
+                // requested page index > 1
+                if ($totalQueryResults >= $this->pager->getResultsPage()) {
+                    // main query results array length >= resultsPage
+                    // we are not sure that this page is last, so count is required
+                    $countRequired = true;
+                } else {
+                    // main query results array length < resultsPage
+                    if ($totalQueryResults > 0) {
+                        // there are results for this page, we can assume that is last page
+                        $this->pager->setTotalResults($totalQueryResults + ($this->pager->getResultsPage() * ($this->pager->getCurrentPageIndex() - 1)));
+                        $this->pager->setTotalPages($this->pager->getCurrentPageIndex());
+                    } else {
+                        // no results for this page, invalid page (ex page 5 of 3)
+                        // we are not sure that this page is last, so count is required
+                        $countRequired = true;
+                    }
+                }
+            } else {
+                // currentPageindex <= 0 (invalid value)
+                throw new \Exception("invalid current page index");
+            }
+            if (! $skipCount && $countRequired) {
+                $countResults = $this->dbh->query($countQuery, $this->queryParams);
+                $this->pager->setTotalResults($countResults[0]->{$this->getQueryCountAlias()}, true);
             }
         }
         $data = new \aportela\DatabaseBrowserWrapper\BrowserResults($this->filter, $this->sort, $this->pager, $results);
