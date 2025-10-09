@@ -20,20 +20,16 @@ final class SortItem implements InterfaceSortItem
         if ($this->caseInsensitive) {
             switch ($adapterType) {
                 case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_SQLite:
-                    return (sprintf(" %s COLLATE NOCASE %s", $this->field, $this->order->value));
-                    break;
+                    return sprintf(" %s COLLATE NOCASE %s", $this->field, $this->order->value);
                 case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_MariaDB:
-                    return (sprintf(" %s COLLATE utf8_general_ci %s", $this->field, $this->order->value));
-                    break;
+                    return sprintf(" %s COLLATE utf8_general_ci %s", $this->field, $this->order->value);
                 case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_PostgreSQL:
-                    return (sprintf(' %s COLLATE "C" %s', $this->field, $this->order->value));
-                    break;
+                    return sprintf(' %s COLLATE "C" %s', $this->field, $this->order->value);
                 default:
                     return (null);
-                    break;
             }
         } else {
-            return (sprintf(" %s %s", $this->field, $this->order->value));
+            return sprintf(" %s %s", $this->field, $this->order->value);
         }
     }
 }

@@ -90,22 +90,18 @@ final class Pager
             switch ($adapterType) {
                 case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_SQLite:
                     $start = ($this->currentPageIndex - 1) * $this->resultsPage;
-                    return (sprintf(" LIMIT %d, %d ", $start, $this->resultsPage));
-                    break;
+                    return sprintf(" LIMIT %d, %d ", $start, $this->resultsPage);
                 case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_MariaDB:
                     $start = ($this->currentPageIndex - 1) * $this->resultsPage;
-                    return (sprintf(" LIMIT %d OFFSET %d ", $this->resultsPage, $start));
-                    break;
+                    return sprintf(" LIMIT %d OFFSET %d ", $this->resultsPage, $start);
                 case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_PostgreSQL:
                     $start = ($this->currentPageIndex - 1) * $this->resultsPage;
-                    return (sprintf(" LIMIT %d OFFSET %d ", $this->resultsPage, $start));
-                    break;
+                    return sprintf(" LIMIT %d OFFSET %d ", $this->resultsPage, $start);
                 default:
-                    return (null);
-                    break;
+                    return null;
             }
         } else {
-            return (null);
+            return null;
         }
     }
 }

@@ -10,17 +10,12 @@ final class SortItemRandom implements InterfaceSortItem
     {
         switch ($adapterType) {
             case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_SQLite:
-                return (" RANDOM() ");
-                break;
-            case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_MariaDB:
-                return (" RAND() ");
-                break;
             case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_PostgreSQL:
-                return (" RANDOM() ");
-                break;
+                return " RANDOM() ";
+            case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_MariaDB:
+                return " RAND() ";
             default:
-                return (null);
-                break;
+                return null;
         }
     }
 }
