@@ -8,7 +8,7 @@ Custom php (pdo) database element browsing wrapper
 
 ## Limitations
 
-At this time only SQLite is supported.
+At this time only SQLite | MariaDB | PostgreSQL are supported.
 
 # install
 
