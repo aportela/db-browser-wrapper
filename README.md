@@ -74,7 +74,18 @@ composer require "aportela/db-browser-wrapper"
         ]
     );
     $filter = new \aportela\DatabaseBrowserWrapper\Filter();
-    $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
+    // with this handler (OPTIONAL) we can modify each result item after getting the results
+    // in this example we convert the age field to integer but anything can be done
+    $afterBrowse = function ($data) {
+        array_map(
+            function ($item)  {
+                $item->age = intval($item->age);
+                return ($item);
+            },
+            $data->items
+        );
+    };
+    $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter, $afterBrowse);
     // this is the main query for getting results data
     // first %s will be replaced with query fields block
     // second %s will be replaced with sort block
