@@ -8,15 +8,19 @@ final class Browser
      * @var array<\aportela\DatabaseWrapper\Param\InterfaceParam>
      */
     private array $queryParams = [];
+    
     /**
      * @var array<string, string>
      */
     private array $fieldDefinitions = [];
+    
     /**
      * @var array<string, string>
      */
     private ?array $fieldCountDefinition = [];
+    
     private readonly \aportela\DatabaseBrowserWrapper\Pager $pager;
+    
     private readonly mixed $afterBrowseFunction;
 
     /**
@@ -25,11 +29,12 @@ final class Browser
      */
     public function __construct(private readonly \aportela\DatabaseWrapper\DB $db, array $fieldDefinitions, ?array $fieldCountDefinition, \aportela\DatabaseBrowserWrapper\Pager $pager, private readonly \aportela\DatabaseBrowserWrapper\Sort $sort, private readonly \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
     {
-        if (count($fieldDefinitions) > 0) {
+        if ($fieldDefinitions !== []) {
             $this->fieldDefinitions = $fieldDefinitions;
         } else {
             throw new \Exception("invalid fieldDefinitions");
         }
+        
         if ($pager->isEnabled()) {
             if (count($fieldCountDefinition) == 1) {
                 $this->fieldCountDefinition = $fieldCountDefinition;
@@ -37,6 +42,7 @@ final class Browser
                 throw new \Exception("invalid fieldCountDefinition");
             }
         }
+        
         $this->pager = $pager;
         $this->afterBrowseFunction = $afterBrowseFunction;
     }
@@ -47,6 +53,7 @@ final class Browser
         foreach ($this->fieldDefinitions as $alias => $field) {
             $queryFields[] = $field . " AS " . $alias;
         }
+        
         return (implode(", ", $queryFields));
     }
 
@@ -183,15 +190,18 @@ final class Browser
                 // currentPageindex <= 0 (invalid value)
                 throw new \Exception("invalid current page index");
             }
+            
             if (! $skipCount && $countRequired) {
                 $countResults = $this->db->query($countQuery, $this->queryParams);
                 $this->pager->setTotalResults($countResults[0]->{$this->getQueryCountAlias()}, true);
             }
         }
+        
         $browserResults = new \aportela\DatabaseBrowserWrapper\BrowserResults($this->filter, $this->sort, $this->pager, $results);
         if ($this->afterBrowseFunction != null) {
             call_user_func($this->afterBrowseFunction, $browserResults);
         }
+        
         return ($browserResults);
     }
 }

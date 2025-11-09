@@ -29,6 +29,7 @@ final readonly class Filter implements \JsonSerializable
                 return ($value);
             }
         }
+
         return (null);
     }
 }

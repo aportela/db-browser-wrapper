@@ -12,6 +12,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
     private static \aportela\DatabaseWrapper\DB $db;
 
     private static string $databasePath;
+
     private static string $upgradeSchemaPath;
 
     /**
@@ -64,7 +65,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
      * Initialize the test case
      * Called for every defined test
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         if (!self::$db->isSchemaInstalled()) {
@@ -195,6 +196,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
         $browser->addDBQueryParam(new \aportela\DatabaseWrapper\Param\IntegerParam(":id", 3));
+
         $query = $browser->buildQuery(
             "
                 SELECT %s FROM TABLEV1
@@ -223,6 +225,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(self::$db, $this->fieldDefinitions, $this->fieldCountDefinition, $pager, $sort, $filter);
         $browser->addDBQueryParam(new \aportela\DatabaseWrapper\Param\IntegerParam(":id", 3));
+
         $query = $browser->buildQuery(
             "
                 SELECT %s FROM TABLEV1

@@ -17,7 +17,8 @@ final readonly class Sort
         foreach ($this->items as $item) {
             $sortItems[] = $item->getQuery($adapterType);
         }
-        if (count($sortItems) > 0) {
+
+        if ($sortItems !== []) {
             return (sprintf(" ORDER BY %s", implode(", ", $sortItems)));
         } else {
             return (null);
