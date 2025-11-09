@@ -156,7 +156,7 @@ final class Browser
             $this->pager->setTotalPages($totalQueryResults > 0 ? 1 : 0);
         } else {
             // pager is enabled
-            if ($this->pager->getCurrentPageIndex() == 1) {
+            if ($this->pager->getCurrentPageIndex() === 1) {
                 // requested first page
                 if ($totalQueryResults >= $this->pager->getResultsPage()) {
                     // main query results array length >= resultsPage
@@ -174,17 +174,15 @@ final class Browser
                     // main query results array length >= resultsPage
                     // we are not sure that this page is last, so count is required
                     $countRequired = true;
-                } else {
+                } elseif ($totalQueryResults > 0) {
                     // main query results array length < resultsPage
-                    if ($totalQueryResults > 0) {
-                        // there are results for this page, we can assume that is last page
-                        $this->pager->setTotalResults($totalQueryResults + ($this->pager->getResultsPage() * ($this->pager->getCurrentPageIndex() - 1)));
-                        $this->pager->setTotalPages($this->pager->getCurrentPageIndex());
-                    } else {
-                        // no results for this page, invalid page (ex page 5 of 3)
-                        // we are not sure that this page is last, so count is required
-                        $countRequired = true;
-                    }
+                    // there are results for this page, we can assume that is last page
+                    $this->pager->setTotalResults($totalQueryResults + ($this->pager->getResultsPage() * ($this->pager->getCurrentPageIndex() - 1)));
+                    $this->pager->setTotalPages($this->pager->getCurrentPageIndex());
+                } else {
+                    // no results for this page, invalid page (ex page 5 of 3)
+                    // we are not sure that this page is last, so count is required
+                    $countRequired = true;
                 }
             } else {
                 // currentPageindex <= 0 (invalid value)
