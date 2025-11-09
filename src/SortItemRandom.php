@@ -4,10 +4,6 @@ namespace aportela\DatabaseBrowserWrapper;
 
 final class SortItemRandom implements InterfaceSortItem
 {
-    public function __construct()
-    {
-    }
-
     public function getQuery(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
     {
         switch ($adapterType) {

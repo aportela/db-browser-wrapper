@@ -92,8 +92,6 @@ final class Pager
                     $start = ($this->currentPageIndex - 1) * $this->resultsPage;
                     return sprintf(" LIMIT %d, %d ", $start, $this->resultsPage);
                 case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_MariaDB:
-                    $start = ($this->currentPageIndex - 1) * $this->resultsPage;
-                    return sprintf(" LIMIT %d OFFSET %d ", $this->resultsPage, $start);
                 case \aportela\DatabaseWrapper\Adapter\AdapterType::PDO_PostgreSQL:
                     $start = ($this->currentPageIndex - 1) * $this->resultsPage;
                     return sprintf(" LIMIT %d OFFSET %d ", $this->resultsPage, $start);
