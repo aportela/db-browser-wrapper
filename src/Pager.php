@@ -4,15 +4,13 @@ namespace aportela\DatabaseBrowserWrapper;
 
 final class Pager
 {
-    private bool $enabled = true;
     private int $currentPageIndex = 1;
     private int $totalPages = 0;
     private int $resultsPage = 32;
     private int $totalResults = 0;
 
-    public function __construct(bool $enabled = true, int $currentPage = 1, int $resultsPage = 32)
+    public function __construct(private readonly bool $enabled = true, int $currentPage = 1, int $resultsPage = 32)
     {
-        $this->enabled = $enabled;
         if ($this->enabled) {
             if ($currentPage > 0) {
                 $this->currentPageIndex = $currentPage;

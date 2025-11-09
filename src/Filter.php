@@ -3,25 +3,18 @@
 namespace aportela\DatabaseBrowserWrapper;
 
 // TODO: document this
-final class Filter implements \JsonSerializable
+final readonly class Filter implements \JsonSerializable
 {
-    /**
-     * @var array<mixed>
-     */
-    private array $originalParams = [];
-
-
     public function jsonSerialize(): mixed
     {
         return ($this->originalParams);
     }
 
     /**
-     * @param array<mixed> $params
+     * @param array<mixed> $originalParams
      */
-    public function __construct(array $params = [])
+    public function __construct(private array $originalParams = [])
     {
-        $this->originalParams = $params;
     }
 
     public function hasParam(string $field): mixed

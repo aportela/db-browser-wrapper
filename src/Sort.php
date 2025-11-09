@@ -2,20 +2,13 @@
 
 namespace aportela\DatabaseBrowserWrapper;
 
-final class Sort
+final readonly class Sort
 {
-    /**
-     * @var array <\aportela\DatabaseBrowserWrapper\InterfaceSortItem>
-     *
-     */
-    private array $items = [];
-
     /**
      * @param array<\aportela\DatabaseBrowserWrapper\InterfaceSortItem> $items
      */
-    public function __construct(array $items = [])
+    public function __construct(private array $items = [])
     {
-        $this->items = $items;
     }
 
     public function getQuery(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string

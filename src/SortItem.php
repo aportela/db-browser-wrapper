@@ -2,17 +2,10 @@
 
 namespace aportela\DatabaseBrowserWrapper;
 
-final class SortItem implements InterfaceSortItem
+final readonly class SortItem implements InterfaceSortItem
 {
-    private string $field;
-    private \aportela\DatabaseBrowserWrapper\Order $order;
-    private bool $caseInsensitive = false;
-
-    public function __construct(string $field, \aportela\DatabaseBrowserWrapper\Order $order, bool $caseInsensitive)
+    public function __construct(private string $field, private \aportela\DatabaseBrowserWrapper\Order $order, private bool $caseInsensitive)
     {
-        $this->field = $field;
-        $this->order = $order;
-        $this->caseInsensitive = $caseInsensitive;
     }
 
     public function getQuery(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string

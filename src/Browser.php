@@ -4,8 +4,6 @@ namespace aportela\DatabaseBrowserWrapper;
 
 final class Browser
 {
-    private \aportela\DatabaseWrapper\DB $dbh;
-
     /**
      * @var array<\aportela\DatabaseWrapper\Param\InterfaceParam>
      */
@@ -18,18 +16,15 @@ final class Browser
      * @var array<string, string>
      */
     private ?array $fieldCountDefinition = [];
-    private \aportela\DatabaseBrowserWrapper\Pager $pager;
-    private \aportela\DatabaseBrowserWrapper\Sort $sort;
-    private \aportela\DatabaseBrowserWrapper\Filter $filter;
-    private mixed $afterBrowseFunction;
+    private readonly \aportela\DatabaseBrowserWrapper\Pager $pager;
+    private readonly mixed $afterBrowseFunction;
 
     /**
      * @param array<string, string> $fieldDefinitions
      * @param array<string, string> $fieldCountDefinition
      */
-    public function __construct(\aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, ?array $fieldCountDefinition, \aportela\DatabaseBrowserWrapper\Pager $pager, \aportela\DatabaseBrowserWrapper\Sort $sort, \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
+    public function __construct(private readonly \aportela\DatabaseWrapper\DB $dbh, array $fieldDefinitions, ?array $fieldCountDefinition, \aportela\DatabaseBrowserWrapper\Pager $pager, private readonly \aportela\DatabaseBrowserWrapper\Sort $sort, private readonly \aportela\DatabaseBrowserWrapper\Filter $filter, ?callable $afterBrowseFunction = null)
     {
-        $this->dbh = $dbh;
         if (count($fieldDefinitions) > 0) {
             $this->fieldDefinitions = $fieldDefinitions;
         } else {
@@ -43,14 +38,12 @@ final class Browser
             }
         }
         $this->pager = $pager;
-        $this->sort = $sort;
-        $this->filter = $filter;
         $this->afterBrowseFunction = $afterBrowseFunction;
     }
 
     private function getQueryFields(): string
     {
-        $queryFields = array();
+        $queryFields = [];
         foreach ($this->fieldDefinitions as $alias => $field) {
             $queryFields[] = $field . " AS " . $alias;
         }
@@ -196,7 +189,7 @@ final class Browser
             }
         }
         $data = new \aportela\DatabaseBrowserWrapper\BrowserResults($this->filter, $this->sort, $this->pager, $results);
-        if ($this->afterBrowseFunction != null && is_callable($this->afterBrowseFunction)) {
+        if ($this->afterBrowseFunction != null) {
             call_user_func($this->afterBrowseFunction, $data);
         }
         return ($data);
