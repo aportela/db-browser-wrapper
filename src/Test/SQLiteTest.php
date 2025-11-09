@@ -108,16 +108,16 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
 
             "
         );
-        $data = $browser->launch($query, $queryCount);
-        $this->assertEquals($data->pager->getTotalResults(), 4);
-        $this->assertEquals($data->pager->getTotalPages(), 2);
-        $this->assertCount(2, $data->items);
-        $this->assertEquals($data->items[0]->id, 4);
-        $this->assertEquals($data->items[0]->name, "DOE");
-        $this->assertEquals($data->items[0]->age, 32);
-        $this->assertEquals($data->items[1]->id, 3);
-        $this->assertEquals($data->items[1]->name, "JOHN");
-        $this->assertEquals($data->items[1]->age, 24);
+        $browserResults = $browser->launch($query, $queryCount);
+        $this->assertEquals($browserResults->pager->getTotalResults(), 4);
+        $this->assertEquals($browserResults->pager->getTotalPages(), 2);
+        $this->assertCount(2, $browserResults->items);
+        $this->assertEquals($browserResults->items[0]->id, 4);
+        $this->assertEquals($browserResults->items[0]->name, "DOE");
+        $this->assertEquals($browserResults->items[0]->age, 32);
+        $this->assertEquals($browserResults->items[1]->id, 3);
+        $this->assertEquals($browserResults->items[1]->name, "JOHN");
+        $this->assertEquals($browserResults->items[1]->age, 24);
     }
 
     public function testPaginationEnabledNoQueryCountRequired(): void
@@ -144,13 +144,13 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 SELECT %s FROM TABLEV1
             "
         );
-        $data = $browser->launch($query, $queryCount);
-        $this->assertEquals($data->pager->getTotalResults(), 4);
-        $this->assertEquals($data->pager->getTotalPages(), 2);
-        $this->assertCount(1, $data->items);
-        $this->assertEquals($data->items[0]->id, 1);
-        $this->assertEquals($data->items[0]->name, "FOO");
-        $this->assertEquals($data->items[0]->age, 8);
+        $browserResults = $browser->launch($query, $queryCount);
+        $this->assertEquals($browserResults->pager->getTotalResults(), 4);
+        $this->assertEquals($browserResults->pager->getTotalPages(), 2);
+        $this->assertCount(1, $browserResults->items);
+        $this->assertEquals($browserResults->items[0]->id, 1);
+        $this->assertEquals($browserResults->items[0]->name, "FOO");
+        $this->assertEquals($browserResults->items[0]->age, 8);
     }
 
     public function testPaginationDisabled(): void
@@ -170,22 +170,22 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 %s
             "
         );
-        $data = $browser->launch($query, "");
-        $this->assertEquals($data->pager->getTotalResults(), 4);
-        $this->assertEquals($data->pager->getTotalPages(), 1);
-        $this->assertCount(4, $data->items);
-        $this->assertEquals($data->items[0]->id, 1);
-        $this->assertEquals($data->items[0]->name, "FOO");
-        $this->assertEquals($data->items[0]->age, 8);
-        $this->assertEquals($data->items[1]->id, 2);
-        $this->assertEquals($data->items[1]->name, "BAR");
-        $this->assertEquals($data->items[1]->age, 16);
-        $this->assertEquals($data->items[2]->id, 3);
-        $this->assertEquals($data->items[2]->name, "JOHN");
-        $this->assertEquals($data->items[2]->age, 24);
-        $this->assertEquals($data->items[3]->id, 4);
-        $this->assertEquals($data->items[3]->name, "DOE");
-        $this->assertEquals($data->items[3]->age, 32);
+        $browserResults = $browser->launch($query, "");
+        $this->assertEquals($browserResults->pager->getTotalResults(), 4);
+        $this->assertEquals($browserResults->pager->getTotalPages(), 1);
+        $this->assertCount(4, $browserResults->items);
+        $this->assertEquals($browserResults->items[0]->id, 1);
+        $this->assertEquals($browserResults->items[0]->name, "FOO");
+        $this->assertEquals($browserResults->items[0]->age, 8);
+        $this->assertEquals($browserResults->items[1]->id, 2);
+        $this->assertEquals($browserResults->items[1]->name, "BAR");
+        $this->assertEquals($browserResults->items[1]->age, 16);
+        $this->assertEquals($browserResults->items[2]->id, 3);
+        $this->assertEquals($browserResults->items[2]->name, "JOHN");
+        $this->assertEquals($browserResults->items[2]->age, 24);
+        $this->assertEquals($browserResults->items[3]->id, 4);
+        $this->assertEquals($browserResults->items[3]->name, "DOE");
+        $this->assertEquals($browserResults->items[3]->age, 32);
     }
 
     public function testWithQueryParams(): void
@@ -203,13 +203,13 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 %s
             "
         );
-        $data = $browser->launch($query, "");
-        $this->assertEquals($data->pager->getTotalResults(), 1);
-        $this->assertEquals($data->pager->getTotalPages(), 1);
-        $this->assertCount(1, $data->items);
-        $this->assertEquals($data->items[0]->id, 3);
-        $this->assertEquals($data->items[0]->name, "JOHN");
-        $this->assertEquals($data->items[0]->age, 24);
+        $browserResults = $browser->launch($query, "");
+        $this->assertEquals($browserResults->pager->getTotalResults(), 1);
+        $this->assertEquals($browserResults->pager->getTotalPages(), 1);
+        $this->assertCount(1, $browserResults->items);
+        $this->assertEquals($browserResults->items[0]->id, 3);
+        $this->assertEquals($browserResults->items[0]->name, "JOHN");
+        $this->assertEquals($browserResults->items[0]->age, 24);
     }
 
     public function testWithRandomSort(): void
@@ -231,10 +231,10 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
                 %s
             "
         );
-        $data = $browser->launch($query, "");
-        $this->assertEquals($data->pager->getTotalResults(), 1);
-        $this->assertEquals($data->pager->getTotalPages(), 1);
-        $this->assertCount(1, $data->items);
+        $browserResults = $browser->launch($query, "");
+        $this->assertEquals($browserResults->pager->getTotalResults(), 1);
+        $this->assertEquals($browserResults->pager->getTotalPages(), 1);
+        $this->assertCount(1, $browserResults->items);
     }
 
     // this needs to be the final test
