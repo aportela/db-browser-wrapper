@@ -38,7 +38,7 @@ final class Browser
         }
 
         if ($pager->isEnabled()) {
-            if ($fieldCountDefinition !== null && count($fieldCountDefinition) == 1) {
+            if ($fieldCountDefinition !== null && count($fieldCountDefinition) === 1) {
                 $this->fieldCountDefinition = $fieldCountDefinition;
             } else {
                 throw new \Exception("invalid fieldCountDefinition");
