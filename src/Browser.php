@@ -62,7 +62,12 @@ final class Browser
     private function getQueryCountSQLField(): string
     {
         if ($this->pager->isEnabled()) {
-            return (current(array_values($this->fieldCountDefinition)));
+            $field = current(array_values($this->fieldCountDefinition));
+            if (is_string($field)) {
+                return ($field);
+            } else {
+                throw new \Exception("invalid fieldCountDefinition key type: " . gettype($field));
+            }
         } else {
             throw new \Exception("pager is disabled");
         }
@@ -71,7 +76,12 @@ final class Browser
     private function getQueryCountAlias(): string
     {
         if ($this->pager->isEnabled()) {
-            return (current(array_keys($this->fieldCountDefinition)));
+            $alias = current(array_keys($this->fieldCountDefinition));
+            if (is_string($alias)) {
+                return ($alias);
+            } else {
+                throw new \Exception("invalid fieldCountDefinition alias type: " . gettype($alias));
+            }
         } else {
             throw new \Exception("pager is disabled");
         }
