@@ -113,11 +113,17 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($browserResults->pager->getTotalResults(), 4);
         $this->assertEquals($browserResults->pager->getTotalPages(), 2);
         $this->assertCount(2, $browserResults->items);
+        $this->assertTrue(property_exists($browserResults->items[0], "id"));
         $this->assertEquals($browserResults->items[0]->id, 4);
+        $this->assertTrue(property_exists($browserResults->items[0], "name"));
         $this->assertEquals($browserResults->items[0]->name, "DOE");
+        $this->assertTrue(property_exists($browserResults->items[0], "age"));
         $this->assertEquals($browserResults->items[0]->age, 32);
+        $this->assertTrue(property_exists($browserResults->items[1], "id"));
         $this->assertEquals($browserResults->items[1]->id, 3);
+        $this->assertTrue(property_exists($browserResults->items[1], "name"));
         $this->assertEquals($browserResults->items[1]->name, "JOHN");
+        $this->assertTrue(property_exists($browserResults->items[1], "age"));
         $this->assertEquals($browserResults->items[1]->age, 24);
     }
 
@@ -149,8 +155,11 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($browserResults->pager->getTotalResults(), 4);
         $this->assertEquals($browserResults->pager->getTotalPages(), 2);
         $this->assertCount(1, $browserResults->items);
+        $this->assertTrue(property_exists($browserResults->items[0], "id"));
         $this->assertEquals($browserResults->items[0]->id, 1);
+        $this->assertTrue(property_exists($browserResults->items[0], "name"));
         $this->assertEquals($browserResults->items[0]->name, "FOO");
+        $this->assertTrue(property_exists($browserResults->items[0], "age"));
         $this->assertEquals($browserResults->items[0]->age, 8);
     }
 
@@ -175,17 +184,29 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($browserResults->pager->getTotalResults(), 4);
         $this->assertEquals($browserResults->pager->getTotalPages(), 1);
         $this->assertCount(4, $browserResults->items);
+        $this->assertTrue(property_exists($browserResults->items[0], "id"));
         $this->assertEquals($browserResults->items[0]->id, 1);
+        $this->assertTrue(property_exists($browserResults->items[0], "name"));
         $this->assertEquals($browserResults->items[0]->name, "FOO");
+        $this->assertTrue(property_exists($browserResults->items[0], "age"));
         $this->assertEquals($browserResults->items[0]->age, 8);
+        $this->assertTrue(property_exists($browserResults->items[1], "id"));
         $this->assertEquals($browserResults->items[1]->id, 2);
+        $this->assertTrue(property_exists($browserResults->items[1], "name"));
         $this->assertEquals($browserResults->items[1]->name, "BAR");
+        $this->assertTrue(property_exists($browserResults->items[1], "age"));
         $this->assertEquals($browserResults->items[1]->age, 16);
+        $this->assertTrue(property_exists($browserResults->items[2], "id"));
         $this->assertEquals($browserResults->items[2]->id, 3);
+        $this->assertTrue(property_exists($browserResults->items[2], "name"));
         $this->assertEquals($browserResults->items[2]->name, "JOHN");
+        $this->assertTrue(property_exists($browserResults->items[2], "age"));
         $this->assertEquals($browserResults->items[2]->age, 24);
+        $this->assertTrue(property_exists($browserResults->items[3], "id"));
         $this->assertEquals($browserResults->items[3]->id, 4);
+        $this->assertTrue(property_exists($browserResults->items[3], "name"));
         $this->assertEquals($browserResults->items[3]->name, "DOE");
+        $this->assertTrue(property_exists($browserResults->items[3], "age"));
         $this->assertEquals($browserResults->items[3]->age, 32);
     }
 
@@ -209,8 +230,11 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($browserResults->pager->getTotalResults(), 1);
         $this->assertEquals($browserResults->pager->getTotalPages(), 1);
         $this->assertCount(1, $browserResults->items);
+        $this->assertTrue(property_exists($browserResults->items[0], "id"));
         $this->assertEquals($browserResults->items[0]->id, 3);
+        $this->assertTrue(property_exists($browserResults->items[0], "name"));
         $this->assertEquals($browserResults->items[0]->name, "JOHN");
+        $this->assertTrue(property_exists($browserResults->items[0], "age"));
         $this->assertEquals($browserResults->items[0]->age, 24);
     }
 
