@@ -46,7 +46,21 @@ composer require "aportela/db-browser-wrapper"
     // open database (SQLiTE)
     $dbh = new \aportela\DatabaseWrapper\DB(
         // change PDOSQLiteAdapter with (PDOMariaDBAdapter || PDOPostgreSQLAdapter) for connecting to (MariaDB || PostgreSQL) server
-        new \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter($databasePath, $upgradeSchemaPath, \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_JOURNAL_WAL),
+        new \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter(
+            $databasePath,
+            [
+                    // Turn off persistent connections
+                    \PDO::ATTR_PERSISTENT => false,
+                    // Enable exceptions
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    // Emulate prepared statements
+                    \PDO::ATTR_EMULATE_PREPARES => true,
+                    // Set default fetch mode to array
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+            ],
+            \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_JOURNAL_WAL,
+            $upgradeSchemaPath,
+        ),
         new \Psr\Log\NullLogger()
     );
 

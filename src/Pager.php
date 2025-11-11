@@ -7,11 +7,11 @@ namespace aportela\DatabaseBrowserWrapper;
 final class Pager
 {
     private int $currentPageIndex = 1;
-    
+
     private int $totalPages = 0;
-    
+
     private int $resultsPage = 32;
-    
+
     private int $totalResults = 0;
 
     public function __construct(private readonly bool $enabled = true, int $currentPage = 1, int $resultsPage = 32)
@@ -22,7 +22,7 @@ final class Pager
             } else {
                 throw new \Exception("invalid current page index");
             }
-            
+
             if ($resultsPage > 0) {
                 $this->resultsPage = $resultsPage;
             } else {
