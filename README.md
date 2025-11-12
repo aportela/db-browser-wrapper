@@ -90,10 +90,12 @@ composer require "aportela/db-browser-wrapper"
     $filter = new \aportela\DatabaseBrowserWrapper\Filter();
     // with this handler (OPTIONAL) we can modify each result item after getting the results
     // in this example we convert the age field to integer but anything can be done
-    $afterBrowse = function ($data) {
+    $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $data) {
         array_map(
-            function ($item)  {
-                $item->age = intval($item->age);
+            function (object $item)  {
+                if (property_exists($item, "age") && is_numeric($item->age) {
+                    $item->age = intval($item->age);
+                }
                 return ($item);
             },
             $data->items
