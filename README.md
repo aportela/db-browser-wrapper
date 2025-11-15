@@ -93,7 +93,7 @@ composer require "aportela/db-browser-wrapper"
     $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $data) {
         array_map(
             function (object $item)  {
-                if (property_exists($item, "age") && is_numeric($item->age) {
+                if (property_exists($item, "age") && is_numeric($item->age)) {
                     $item->age = intval($item->age);
                 }
                 return ($item);
