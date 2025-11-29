@@ -6,9 +6,7 @@ namespace aportela\DatabaseBrowserWrapper;
 
 final readonly class SortItem implements InterfaceSortItem
 {
-    public function __construct(private string $field, private \aportela\DatabaseBrowserWrapper\Order $order, private bool $caseInsensitive)
-    {
-    }
+    public function __construct(private string $field, private \aportela\DatabaseBrowserWrapper\Order $order, private bool $caseInsensitive) {}
 
     public function getQuery(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
     {

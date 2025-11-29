@@ -21,14 +21,14 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
     private array $fieldDefinitions = [
         "id" => "TABLEV1.id",
         "name" => "TABLEV1.name",
-        "age" => "TABLEV1.age"
+        "age" => "TABLEV1.age",
     ];
 
     /**
      * @var array<string, string>
      */
     private array $fieldCountDefinition = [
-        "totalResults" => "COUNT(TABLEV1.id)"
+        "totalResults" => "COUNT(TABLEV1.id)",
     ];
 
     public static function setUpBeforeClass(): void
@@ -105,7 +105,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $sort = new \aportela\DatabaseBrowserWrapper\Sort(
             [
                 new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC, false),
-                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
+                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC, true),
             ]
         );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
@@ -147,7 +147,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $sort = new \aportela\DatabaseBrowserWrapper\Sort(
             [
                 new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC, false),
-                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
+                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC, true),
             ]
         );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();
@@ -257,7 +257,7 @@ final class SQLiteTest extends \PHPUnit\Framework\TestCase
         $pager = new \aportela\DatabaseBrowserWrapper\Pager(false, 1, 1);
         $sort = new \aportela\DatabaseBrowserWrapper\Sort(
             [
-                new \aportela\DatabaseBrowserWrapper\SortItemRandom()
+                new \aportela\DatabaseBrowserWrapper\SortItemRandom(),
             ]
         );
         $filter = new \aportela\DatabaseBrowserWrapper\Filter();

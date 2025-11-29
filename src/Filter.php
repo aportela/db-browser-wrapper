@@ -15,9 +15,7 @@ final readonly class Filter implements \JsonSerializable
     /**
      * @param array<mixed> $originalParams
      */
-    public function __construct(private array $originalParams = [])
-    {
-    }
+    public function __construct(private array $originalParams = []) {}
 
     public function hasParam(string $field): mixed
     {

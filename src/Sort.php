@@ -9,9 +9,7 @@ final readonly class Sort
     /**
      * @param array<\aportela\DatabaseBrowserWrapper\InterfaceSortItem> $items
      */
-    public function __construct(private array $items = [])
-    {
-    }
+    public function __construct(private array $items = []) {}
 
     public function getQuery(\aportela\DatabaseWrapper\Adapter\AdapterType $adapterType): ?string
     {
